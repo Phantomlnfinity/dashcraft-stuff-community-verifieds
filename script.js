@@ -2,7 +2,8 @@ const tracks = [];
 const IDarr = [];
 const numbers = ["1st", "2nd", "3rd", "4th", "5th", "6th", "7th", "8th", "9th", "10th"]
 const leagues = ["Bronze 1", "Bronze 2", "Bronze 3", "Silver 1", "Silver 2", "Silver 3", "Gold 1", "Gold 2", "Gold 3", "Diamond"]
-const points = []
+const points = [];
+
 
 
 function retrieveMaps() {
@@ -69,6 +70,10 @@ function getInfo() {
         tracks.pop();
       }
       for (let a = 0; a < IDL.length; a++) {
+        if (IDL[a].leaderboard.find(({user}) => user._id==="662334de69042c3463e0eefc") && document.getElementById("byeserphal").checked) {
+          var serphalpos = (IDL[a].leaderboard.findIndex(({user}) => user._id==="662334de69042c3463e0eefc"))
+          IDL[a].leaderboard.splice(serphalpos, serphalpos+1)
+        }
         tracks.push(IDL[a]);
       }
       calculate()
