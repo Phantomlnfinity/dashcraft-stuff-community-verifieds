@@ -211,7 +211,7 @@ function getPositions(player) {
     }
   }
   console.log(positions)
-  positions.sort((a, b) => (b.time - b.wr) - (a.time - a.wr));
+  positions.sort((a, b) => (b.position) - (a.position));
   console.log(totals)
   totals.time = Math.round(totals.time * 10000) / 10000
   totals.position = Math.round(totals.position * 100) / 100
