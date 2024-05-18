@@ -145,7 +145,7 @@ function playerLookup() {
   if (players.length == 1) {
     track.innerHTML += "<h4>Tracks</h4>"
     getTracks(players[0])
-    link.innerHTML += "Level " + players[0].levelData.level + " (" + players[0].levelData.xpInLevel + "/" + players[0].levelData.totalXpInLevel + ")"
+    link.innerHTML += "Level " + (players[0].levelData.level + 1) + " (" + players[0].levelData.xpInLevel + "/" + players[0].levelData.totalXpInLevel + ")"
     link.innerHTML += "<br>" + leagues[players[0].leagueNr]
   }
   if (!document.getElementById("checkbox").checked) {
