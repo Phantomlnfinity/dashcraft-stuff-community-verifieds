@@ -115,7 +115,7 @@ button {
 
   background-color: #eee;
   border-radius: 5px;
-  
+
 }
 
 /* On mouse-over, add a grey background color */
@@ -134,7 +134,7 @@ button {
   content: "";
   position: absolute;
   display: none;
-  
+
 }
 
 /* Show the checkmark when checked */

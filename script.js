@@ -1,3 +1,4 @@
+
 const tracks = [];
 const IDarr = [];
 const numbers = ["1st", "2nd", "3rd", "4th", "5th", "6th", "7th", "8th", "9th", "10th"]
@@ -15,10 +16,17 @@ function retrieveMaps() {
   } else {
     var url = "https://api.dashcraft.io/trackv2/global3?sort=new&verifiedOnly=false&page="
   }
+  if (document.getElementById("25only").checked) {
+    var pagesize = 25;
+    var pages = 1
+  } else {
+    var pagesize = 50;
+    var pages = 1000
+  }
   var fetches = [];
-  for (let i = 0; i < 1000; i++) {
+  for (let i = 0; i < pages; i++) {
     fetches.push(
-      fetch(url + i + "&pageSize=50")
+      fetch(url + i + "&pageSize=" + pagesize)
         .then((response) => response.json())
         .then((json) => {
 
@@ -243,4 +251,3 @@ function countPoints() {
 function sleep(ms) {
   return new Promise(resolve => setTimeout(resolve, ms));
 }
-
