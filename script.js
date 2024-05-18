@@ -83,9 +83,9 @@ function getInfo() {
         tracks.pop();
       }
       for (let a = 0; a < IDL.length; a++) {
-        if (IDL[a].leaderboard.find(({user}) => user._id==="662334de69042c3463e0eefc") && document.getElementById("byeserphal").checked) {
-          var serphalpos = (IDL[a].leaderboard.findIndex(({user}) => user._id==="662334de69042c3463e0eefc"))
-          IDL[a].leaderboard.splice(serphalpos, serphalpos+1)
+        if (IDL[a].leaderboard.find(({ user }) => user._id === "662334de69042c3463e0eefc") && document.getElementById("byeserphal").checked) {
+          var serphalpos = (IDL[a].leaderboard.findIndex(({ user }) => user._id === "662334de69042c3463e0eefc"))
+          IDL[a].leaderboard.splice(serphalpos, serphalpos + 1)
         }
         tracks.push(IDL[a]);
       }
@@ -207,20 +207,20 @@ function getPositions(player) {
       totals.position += positions[positions.length - 1].position
       totals.tracks += 1
     } else {
-      positions.push({ position: "N/A", mapper: tracks[i].user.username, link: "https://dashcraft.io/?t=" + tracks[i]._id, wr: tracks[i].leaderboard[0].time, time: 100000 })
+      positions.push({ position: 11, mapper: tracks[i].user.username, link: "https://dashcraft.io/?t=" + tracks[i]._id, wr: tracks[i].leaderboard[0].time, time: 100000 })
     }
   }
   console.log(positions)
-  positions.sort((a, b) => (b.position) - (a.position));
+  positions.sort((a, b) => (b.position + ((b.time - b.wr) / 10000)) - ((a.position) + (a.time - a.wr) / 10000));
   console.log(totals)
   totals.time = Math.round(totals.time * 10000) / 10000
   totals.position = Math.round(totals.position * 100) / 100
-  if (positions.find(({ position }) => position === "N/A")) {
+  if (positions.find(({ position }) => position === 11)) {
     totals.time += " (not top 10 on all tracks)"
   }
   var html = "Total time: " + totals.time + "<br>Average position: " + totals.position / totals.tracks + "<br>"
   for (let i = 0; i < positions.length; i++) {
-    if (positions[i].position == "N/A") {
+    if (positions[i].position == 11) {
       html += "<br><a href='" + positions[i].link + "' target='_blank'>" + positions[i].mapper + "</a>'s track: Not top 10"
     } else {
       html += "<br><a href='" + positions[i].link + "' target='_blank'>" + positions[i].mapper + "</a>'s track: " + numbers[positions[i].position - 1] + " place ("
@@ -238,9 +238,9 @@ function countPoints() {
     for (let j = 0; j < tracks[i].leaderboard.length; j++) {
       if (points.find(({ username }) => username === tracks[i].leaderboard[j].user.username) != undefined) {
         points.find(({ username }) => username === tracks[i].leaderboard[j].user.username).altpoints += (1 / (j + 1));
-        points.find(({ username }) => username === tracks[i].leaderboard[j].user.username).points += ((1.05)**(-j));
+        points.find(({ username }) => username === tracks[i].leaderboard[j].user.username).points += ((1.05) ** (-j));
       } else {
-        points.push({ username: tracks[i].leaderboard[j].user.username, points: ((1.05)**(-j)), altpoints: (1 / (j + 1)) });
+        points.push({ username: tracks[i].leaderboard[j].user.username, points: ((1.05) ** (-j)), altpoints: (1 / (j + 1)) });
       }
     }
   }
