@@ -1,6 +1,7 @@
 
 let tracks = [];
 let IDarr = [];
+let working = false;
 const numbers = ["1st", "2nd", "3rd", "4th", "5th", "6th", "7th", "8th", "9th", "10th"]
 const leagues = ["Bronze 1", "Bronze 2", "Bronze 3", "Silver 1", "Silver 2", "Silver 3", "Gold 1", "Gold 2", "Gold 3", "Diamond"]
 let points = [];
@@ -8,6 +9,10 @@ let points = [];
 
 
 function retrieveMaps() {
+  if (working) {
+    return;
+  }
+  working = true;
   points = [];
   IDarr = [];
   tracks = [];
@@ -100,6 +105,8 @@ function calculate() {
   document.getElementById("dislikes").innerHTML = "Dislikes: " + Math.round(tracks.reduce((total, current) => total + current.dislikesCount, 0) / tracks.length);
 
   document.getElementById("leaderboard").innerHTML = "<h2>Leaderboard</h2>" + countPoints();
+
+  working = false;
 
 
 
