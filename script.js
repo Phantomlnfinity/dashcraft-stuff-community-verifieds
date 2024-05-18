@@ -1,16 +1,16 @@
 
-const tracks = [];
-const IDarr = [];
+let tracks = [];
+let IDarr = [];
 const numbers = ["1st", "2nd", "3rd", "4th", "5th", "6th", "7th", "8th", "9th", "10th"]
 const leagues = ["Bronze 1", "Bronze 2", "Bronze 3", "Silver 1", "Silver 2", "Silver 3", "Gold 1", "Gold 2", "Gold 3", "Diamond"]
-const points = [];
+let points = [];
 
 
 
 function retrieveMaps() {
-  while (tracks.length > 0) {
-    tracks.pop();
-  }
+  points = [];
+  IDarr = [];
+  tracks = [];
   if (document.getElementById("checkbox").checked) {
     var url = "https://api.dashcraft.io/trackv2/global3?sort=new&verifiedOnly=true&page="
   } else {
@@ -99,7 +99,7 @@ function calculate() {
   document.getElementById("likes").innerHTML = "Likes: " + Math.round(tracks.reduce((total, current) => total + current.likesCount, 0) / tracks.length);
   document.getElementById("dislikes").innerHTML = "Dislikes: " + Math.round(tracks.reduce((total, current) => total + current.dislikesCount, 0) / tracks.length);
 
-  document.getElementById("leaderboard").innerHTML += countPoints();
+  document.getElementById("leaderboard").innerHTML = "<h2>Leaderboard</h2>" + countPoints();
 
 
 
@@ -230,9 +230,10 @@ function countPoints() {
   for (let i = 0; i < tracks.length; i++) {
     for (let j = 0; j < tracks[i].leaderboard.length; j++) {
       if (points.find(({ username }) => username === tracks[i].leaderboard[j].user.username) != undefined) {
-        points.find(({ username }) => username === tracks[i].leaderboard[j].user.username).points += (1 / (j + 1));
+        points.find(({ username }) => username === tracks[i].leaderboard[j].user.username).altpoints += (1 / (j + 1));
+        points.find(({ username }) => username === tracks[i].leaderboard[j].user.username).points += ((1.05)**(-j));
       } else {
-        points.push({ username: tracks[i].leaderboard[j].user.username, points: (1 / (j + 1)) });
+        points.push({ username: tracks[i].leaderboard[j].user.username, points: ((1.05)**(-j)), altpoints: (1 / (j + 1)) });
       }
     }
   }
@@ -242,7 +243,8 @@ function countPoints() {
   var html = ""
   for (let i = 0; i < points.length; i++) {
     points[i].points = Math.round(points[i].points * 1000000 / tracks.length)
-    html += points[i].username + ": " + points[i].points + " points<br>"
+    points[i].altpoints = Math.round(points[i].altpoints * 1000000 / tracks.length)
+    html += points[i].username + ": " + points[i].altpoints + " points (" + points[i].points + " in game)<br>"
   }
   return html
 }
