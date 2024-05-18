@@ -245,7 +245,7 @@ function countPoints() {
     }
   }
 
-  points.sort((a, b) => b.points - a.points);
+  points.sort((a, b) => b.altpoints - a.altpoints);
   console.log(points)
   var html = ""
   for (let i = 0; i < points.length; i++) {
