@@ -236,11 +236,12 @@ function getPositions(player) {
 function countPoints() {
   for (let i = 0; i < tracks.length; i++) {
     for (let j = 0; j < tracks[i].leaderboard.length; j++) {
+      var decay = 1.05126;
       if (points.find(({ username }) => username === tracks[i].leaderboard[j].user.username) != undefined) {
         points.find(({ username }) => username === tracks[i].leaderboard[j].user.username).altpoints += (1 / (j + 1));
-        points.find(({ username }) => username === tracks[i].leaderboard[j].user.username).points += ((1.05) ** (-j));
+        points.find(({ username }) => username === tracks[i].leaderboard[j].user.username).points += ((decay) ** (-j));
       } else {
-        points.push({ username: tracks[i].leaderboard[j].user.username, points: ((1.05) ** (-j)), altpoints: (1 / (j + 1)) });
+        points.push({ username: tracks[i].leaderboard[j].user.username, points: ((decay) ** (-j)), altpoints: (1 / (j + 1)) });
       }
     }
   }
