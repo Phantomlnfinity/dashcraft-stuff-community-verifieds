@@ -236,12 +236,12 @@ function getPositions(player) {
 function countPoints() {
   for (let i = 0; i < tracks.length; i++) {
     for (let j = 0; j < tracks[i].leaderboard.length; j++) {
-      var decay = 1.05126;
+      var decay = 1.051271  ;
       if (points.find(({ username }) => username === tracks[i].leaderboard[j].user.username) != undefined) {
         points.find(({ username }) => username === tracks[i].leaderboard[j].user.username).altpoints += (1 / (j + 1));
-        points.find(({ username }) => username === tracks[i].leaderboard[j].user.username).points += ((decay) ** (-j));
+        points.find(({ username }) => username === tracks[i].leaderboard[j].user.username).points += Math.ceil((decay) ** (-j)*1000000/tracks.length);
       } else {
-        points.push({ username: tracks[i].leaderboard[j].user.username, points: ((decay) ** (-j)), altpoints: (1 / (j + 1)) });
+        points.push({ username: tracks[i].leaderboard[j].user.username, points: Math.ceil((decay) ** (-j)*1000000/tracks.length), altpoints: (1 / (j + 1)) });
       }
     }
   }
@@ -250,7 +250,7 @@ function countPoints() {
   console.log(points)
   var html = ""
   for (let i = 0; i < points.length; i++) {
-    points[i].points = Math.round(points[i].points * 1000000 / tracks.length)
+
     points[i].altpoints = Math.round(points[i].altpoints * 1000000 / tracks.length)
     html += points[i].username + ": " + points[i].altpoints + " points (" + points[i].points + " in game)<br>"
   }
