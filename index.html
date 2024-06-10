@@ -9,6 +9,18 @@
 </head>
 
 <body>
+  <div id="tracklookup" hidden>
+    <h2>Track Lookup</h2>
+    <div class="topstuff">
+      <input id="tracklink" type="text">
+      <button type="button" onclick="trackLookup()">Get Info</button><br><br>
+    </div>
+    <div id="trackleaderboard"></div>
+    <div id="piecedata"></div>
+  </div>
+
+  <hr>
+  
   <div class="topstuff">
     <button type="button" onclick="retrieveMaps()">Get Info</button>
     <label class="container"> Verified Only
@@ -35,7 +47,10 @@
     </div>
 
     <div id="leaderboard" , class="leaderboard">
-      <h2>Leaderboard</h2>
+      <h2>Point Leaderboard</h2>
+    </div>
+    <div id="wrcount" , class="wrcount">
+      <h2>WR Leaderboard</h2>
     </div>
 
     <br>

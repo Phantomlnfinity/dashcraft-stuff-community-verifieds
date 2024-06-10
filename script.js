@@ -90,21 +90,19 @@ function getInfo() {
         tracks.push(IDL[a]);
       }
       calculate()
-
-
     });
 }
 
 function calculate() {
 
-
-  console.log(tracks)
-
   document.getElementById("players").innerHTML = "Players: " + Math.round(tracks.reduce((total, current) => total + current.leaderboardTotalCount, 0) / tracks.length);
   document.getElementById("likes").innerHTML = "Likes: " + Math.round(tracks.reduce((total, current) => total + current.likesCount, 0) / tracks.length);
   document.getElementById("dislikes").innerHTML = "Dislikes: " + Math.round(tracks.reduce((total, current) => total + current.dislikesCount, 0) / tracks.length);
 
-  document.getElementById("leaderboard").innerHTML = "<h2>Leaderboard</h2>" + countPoints();
+  document.getElementById("leaderboard").innerHTML = "<h2>Point Leaderboard</h2>"
+  document.getElementById("wrcount").innerHTML = "<h2>WR Leaderboard</h2>"
+
+  countPoints()
 
   working = false;
 
@@ -131,6 +129,11 @@ function playerLookup() {
         }
       }
     }
+    if ((tracks[i].user.username).includes(document.getElementById("player").value)) {
+      if (!players.find(({ username }) => username === tracks[i].user.username)) {
+        players.push(tracks[i].user)
+      }
+    }
   }
   console.log(players)
 
@@ -145,7 +148,8 @@ function playerLookup() {
   if (players.length == 1) {
     track.innerHTML += "<h4>Tracks</h4>"
     getTracks(players[0])
-    link.innerHTML += "Level " + (players[0].levelData.level + 1) + " (" + players[0].levelData.xpInLevel + "/" + players[0].levelData.totalXpInLevel + ")"
+    console.log(players[0].levelData)
+    link.innerHTML += "Level " + (players[0].levelData.level + 1) + " (" + players[0].levelData.xpInLevel + "/" + players[0].levelData.totalXpInLevel + ") (" + players[0].levelData.totalXp + " total)"
     link.innerHTML += "<br>" + leagues[players[0].leagueNr]
   }
   if (!document.getElementById("checkbox").checked) {
@@ -236,12 +240,18 @@ function getPositions(player) {
 function countPoints() {
   for (let i = 0; i < tracks.length; i++) {
     for (let j = 0; j < tracks[i].leaderboard.length; j++) {
-      var decay = 1.051271  ;
+      var decay = 1.051271;
       if (points.find(({ username }) => username === tracks[i].leaderboard[j].user.username) != undefined) {
         points.find(({ username }) => username === tracks[i].leaderboard[j].user.username).altpoints += (1 / (j + 1));
-        points.find(({ username }) => username === tracks[i].leaderboard[j].user.username).points += Math.ceil((decay) ** (-j)*1000000/tracks.length);
+        points.find(({ username }) => username === tracks[i].leaderboard[j].user.username).points += Math.ceil((decay) ** (-j) * 1000000 / tracks.length);
+        if (j == 0) {
+          points.find(({ username }) => username === tracks[i].leaderboard[j].user.username).wrs += 1;
+        }
       } else {
-        points.push({ username: tracks[i].leaderboard[j].user.username, points: Math.ceil((decay) ** (-j)*1000000/tracks.length), altpoints: (1 / (j + 1)) });
+        points.push({ username: tracks[i].leaderboard[j].user.username, points: Math.ceil((decay) ** (-j) * 1000000 / tracks.length), altpoints: (1 / (j + 1)), wrs: 0 });
+        if (j == 0) {
+          points[points.length - 1].wrs = 1;
+        }
       }
     }
   }
@@ -250,14 +260,108 @@ function countPoints() {
   console.log(points)
   var html = ""
   for (let i = 0; i < points.length; i++) {
-
     points[i].altpoints = Math.round(points[i].altpoints * 1000000 / tracks.length)
     html += points[i].username + ": " + points[i].altpoints + " points (" + points[i].points + " in game)<br>"
   }
-  return html
+  document.getElementById("leaderboard").innerHTML += html
+
+  points.sort((a, b) => b.wrs - a.wrs);
+  console.log(points)
+  html = ""
+  for (let i = 0; i < points.length; i++) {
+    if (!points[i].wrs == 0) {
+      html += points[i].username + ": " + points[i].wrs + "<br>"
+    }
+  }
+  document.getElementById("wrcount").innerHTML += html
 }
 
+function trackLookup() {
+  var fetches = []
+  var link = document.getElementById("tracklink").value
+  var id = link.slice(link.length - 24, link.length)
 
-function sleep(ms) {
-  return new Promise(resolve => setTimeout(resolve, ms));
+  fetches.push(fetch("https://api.dashcraft.io/trackv2/" + id)
+    .then((response) => response.json())
+    .then((json) => {
+      return json
+    })
+  )
+  fetches.push(fetch("https://cdn.dashcraft.io/v2/prod/track/" + id + ".json?v=3")
+    .then((response) => response.json())
+    .then((json) => {
+      return json
+    })
+  )
+
+  Promise.all(fetches)
+    .then((IDL) => {
+      console.log(IDL)
+      getGhosts(IDL)
+    })
+}
+
+function getGhosts(trackdata) {
+  var fetches = []
+  for (let i = 0; i < trackdata[0].leaderboard.length; i++) {
+    fetches.push(fetch("https://cdn.dashcraft.io/v2/prod/ghost/" + trackdata[0].leaderboard[i]._id + ".json?v=3")
+      .then((response) => response.json())
+      .then((json) => {
+
+        return json
+      })
+    )
+  }
+  Promise.all(fetches)
+    .then((IDL) => {
+      for (let i = 0; i < trackdata[0].leaderboard.length; i++) {
+        trackdata[0].leaderboard[i].ghost = IDL[i]
+      }
+      console.log(trackdata)
+      var cps = []
+      var start = ""
+      for (let i = 0; i < trackdata[1].trackPieces.length; i++) {
+        if (trackdata[1].trackPieces[i].a.includes(1)) {
+          cps.push(trackdata[1].trackPieces[i])
+        }
+        if (trackdata[1].trackPieces[i].id == 1) {
+          start = trackdata[1].trackPieces[i]
+        }
+      }
+      console.log(cps)
+
+
+      for (let i = 0; i < trackdata[0].leaderboard.length; i++) {
+        for (let j = 0; j < trackdata[0].leaderboard[i].ghost.snapshots.length - 1; j++) {
+          for (let k = 0; k < cps.length; k++) {
+
+            if (checkCP(trackdata[0].leaderboard[i].ghost.snapshots[j], cps[k], trackdata[0].leaderboard[i].ghost.snapshots[j + 1])) {
+              console.log(k, i, j)
+            }
+          }
+        }
+      }
+    })
+}
+
+function checkCP(ghost, cp, ghost2) {
+  if (cp.r == 90 || cp.r == 270) {
+    var p2 = ghost.p[2]
+    ghost.p[2] = ghost.p[0]
+    ghost.p[0] = p2
+
+    p2 = ghost2.p[2]
+    ghost2.p[2] = ghost2.p[0]
+    ghost2.p[0] = p2
+  }
+  if (cp.id == 3) {
+    if (
+      ((cp.p[2] < ghost.p[2] && cp.p[2] >= ghost2.p[2]) || (cp.p[2] >= ghost.p[2] && cp.p[2] < ghost2.p[2]))
+      && (cp.p[0] < ghost.p[0] + 15 && cp.p[0] > ghost.p[0] - 15)
+      && (cp.p[1] < ghost.p[1] && cp.p[1] > ghost.p[1] - 15)) {
+      console.log(ghost, cp)
+      return true
+    }
+  }
+  return false
 }
