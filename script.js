@@ -261,7 +261,7 @@ function countPoints() {
   var html = ""
   for (let i = 0; i < points.length; i++) {
     points[i].altpoints = Math.round(points[i].altpoints * 1000000 / tracks.length)
-    html += points[i].username + ": " + points[i].altpoints + " points (" + points[i].points + " in game)<br>"
+    html += (i+1) + ". " + points[i].username + ": " + points[i].altpoints + " points (" + points[i].points + " in game)<br>"
   }
   document.getElementById("leaderboard").innerHTML += html
 
@@ -270,7 +270,7 @@ function countPoints() {
   html = ""
   for (let i = 0; i < points.length; i++) {
     if (!points[i].wrs == 0) {
-      html += points[i].username + ": " + points[i].wrs + "<br>"
+      html += (i+1) + ". " + points[i].username + ": " + points[i].wrs + "<br>"
     }
   }
   document.getElementById("wrcount").innerHTML += html
