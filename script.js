@@ -136,6 +136,11 @@ function playerLookup() {
     }
   }
   console.log(players)
+  if (players.find(({ username }) => username === document.getElementById("player").value)) {
+    console.log("hijhi")
+    var playerpos = players.findIndex(({ username }) => username === document.getElementById("player").value)
+    players.splice(playerpos+1, 10)
+  }
 
   for (let i = 0; i < players.length; i++) {
     link.innerHTML += "<a href='https://dashcraft.io/?u=" + players[i]._id + "' target='_blank'>" + players[i].username + "</a><br>"
@@ -284,7 +289,7 @@ function trackLookup() {
   fetches.push(fetch("https://api.dashcraft.io/trackv2/" + id)
     .then((response) => response.json())
     .then((json) => {
-      return json
+      return json                        
     })
   )
   fetches.push(fetch("https://cdn.dashcraft.io/v2/prod/track/" + id + ".json?v=3")
