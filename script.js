@@ -16,34 +16,20 @@ function retrieveMaps() {
   points = [];
   IDarr = [];
   tracks = [];
-  if (document.getElementById("checkbox").checked) {
-    var url = "https://api.dashcraft.io/trackv2/global3?sort=new&verifiedOnly=true&page="
-  } else {
-    var url = "https://api.dashcraft.io/trackv2/global3?sort=new&verifiedOnly=false&page="
-  }
-  if (document.getElementById("25only").checked) {
-    var pagesize = 25;
-    var pages = 1
-  } else {
-    var pagesize = 50;
-    var pages = 1000
-  }
+  var url = "https://sheets.googleapis.com/v4/spreadsheets/10ERD7U-o5IPoQIEWxu4fK6GqPFpo8Dc9v1VT21GtFTY/values/'Verified Tracks'!B2:B?key=AIzaSyDVPlMY4lBW6g6BGW7A73egVczKWORq-FY"
   var fetches = [];
-  for (let i = 0; i < pages; i++) {
     fetches.push(
-      fetch(url + i + "&pageSize=" + pagesize)
+      fetch(url)
         .then((response) => response.json())
         .then((json) => {
 
-          let json1 = json.tracks;
-          let IDarr = [];
-          for (let a = 0; a < json1.length; a++) {
-            IDarr.push(json1[a]._id);
+          console.log(json);
+          var IDarr = []
+          for (var i = 0; i < json.values.length; i++) {
+            IDarr.push((json.values[i][0]).slice(json.values[i][0].length - 24, json.values[i][0].length));
           }
           return IDarr;
         }));
-
-  }
 
   Promise.all(fetches)
     .then((IDL) => {
